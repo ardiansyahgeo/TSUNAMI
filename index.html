@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Peta Interaktif Rute Evakuasi Bencana Tsunami - Riset Departemen Geografi Universitas Indonesia</title>
+	<link rel="icon" href="img/icon.png" type="image/png">
+	<link href="vendor/openlayers-6.5.0-dist/ol.css" rel="stylesheet">
+	<link href="vendor/bootstrap-5.0.0-dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/main.css" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/f6343dbe47.js" crossorigin="anonymous"></script>
+	<style type="text/css">
+		.ol-scale-text{
+			z-index:10;
+		}
+
+		#zoomtomycoord{
+			position:absolute;
+			z-index:10;
+			top:160px;
+			right:8px;
+			cursor:pointer;
+			background-color:rgba(0,60,136,.5);
+			border-radius:5px;
+			border:3px solid rgba(255,255,255,0.4);
+		}
+
+		#zoomtomycoord:hover{
+			background-color:rgba(0,60,136,1);
+			border:3px solid rgba(255,255,255,0.2);
+		}
+
+		#zoomtomycoord:active{
+			top:163px;
+		}
+	</style>
+</head>
+<body>
+	<div id="dlgshowimage">
+		<div class="content">
+			<div class="close">X</div>
+		</div>
+	</div>
+	<div id="zoomtomycoord"><img src="img/gps.png" width="25px" height="25px" /></div>
+	<div id="scalebarcontainer"></div>
+	<nav id="mainnavbar" class="navbar navbar-expand-lg navbar-light bg-light">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#"><img src="img/icon.png" width="30px" />Peta Interaktif Rute Evakuasi Bencana Tsunami - Riset Departemen Geografi Universitas Indonesia</a>
+			<div>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainmenu" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="mainmenu">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link active" aria-current="page" href="index.html">Home</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</nav>
+	<div id="mapcontainer"></div>
+	<div class="layerswitcher" state="opened">
+		<div class="toggle"><button class="rounded-circle btn btn-light" type="button"><i class="fas fa-fw fa-times"></i></button></div>
+		<div class="content bg-light p-1 rounded">
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="TEMPATEVAKUASIAKHIRTEA_13" checked>
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/TEMPATEVAKUASIAKHIRTEA_13.png" />Tempat Evakuasi Akhir (TEA)</label>
+				</div>
+			</div>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="BANGUNAN1LANTAI_12" checked>
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/BANGUNAN1LANTAI_12.png" />Bangunan &gt;1 Lantai</label>
+				</div>
+			</div>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="JANGKAUANMENUJUTEA_11" checked>
+					<label class="form-check-label">Jangkauan menuju TEA</label>
+				</div>
+				<div class="multilegend">
+					<div><img class="singlelegend" src="map/styles/legend/JANGKAUANMENUJUTEA_11_0.png" />0 - 5 Menit</div>
+					<div><img class="singlelegend" src="map/styles/legend/JANGKAUANMENUJUTEA_11_1.png" />5 - 10 Menit</div>
+					<div><img class="singlelegend" src="map/styles/legend/JANGKAUANMENUJUTEA_11_2.png" />10 - 15 Menit</div>
+					<div><img class="singlelegend" src="map/styles/legend/JANGKAUANMENUJUTEA_11_3.png" />15 - 30 Menit</div>
+					<div><img class="singlelegend" src="map/styles/legend/JANGKAUANMENUJUTEA_11_4.png" />30 - 45 Menit</div>
+				</div>
+			</div>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="JALUR_10" checked>
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/JALUR_10.png" />Jalur</label>
+				</div>
+			</div>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="WILAYAHRAWANTSUNAMI_3" checked>
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/WILAYAHRAWANTSUNAMI_3.png" />Wilayah rawan tsunami</label>
+				</div>
+			</div>
+			<div class="dropdown-divider"></div>
+			<h6 class="dropdown-header">Jangkauan TES</h6>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="JANGKAUANTESUNTUKMENDORONGKERETA15Menit_9">
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/JANGKAUANTESUNTUKMENDORONGKERETA15Menit_9.png" />Mendorong kereta (15 menit)</label>
+				</div>
+			</div>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="JANGKAUANTESSESEORANGDENGANANAK15Menit_8">
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/JANGKAUANTESSESEORANGDENGANANAK15Menit_8.png" />Seseorang dengan anak (15 menit)</label>
+				</div>
+			</div>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="JANGKAUANTESUNTUKLANSIA15Menit_7">
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/JANGKAUANTESUNTUKLANSIA15Menit_7.png" />Lansia (15 menit)</label>
+				</div>
+			</div>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="JANGKAUANTESUNTUKMENDORONGKERETA39Menit_6">
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/JANGKAUANTESUNTUKMENDORONGKERETA39Menit_6.png" />Mendorong kereta (39 menit)</label>
+				</div>
+			</div>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="JANGKAUANTESSESEORANGDENGANANAK39Menit_5">
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/JANGKAUANTESSESEORANGDENGANANAK39Menit_5.png" />Seseorang dengan anak (39 menit)</label>
+				</div>
+			</div>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="checkbox" value="JANGKAUANTESUNTUKLANSIA39Menit_4">
+					<label class="form-check-label"><img class="singlelegend" src="map/styles/legend/JANGKAUANTESUNTUKLANSIA39Menit_4.png" />Lansia (39 menit)</label>
+				</div>
+			</div>
+			<div class="dropdown-divider"></div>
+			<h6 class="dropdown-header">Basemap</h6>
+			<div class="dropdown-item">
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="radio" name="basemap" value="OSM">
+					<label class="form-check-label">OpenStreetMap</label>
+				</div>
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="radio" name="basemap" value="GHYBRID" checked>
+					<label class="form-check-label">Google Hybrid</label>
+				</div>
+				<div class="form-check form-switch">
+					<input class="form-check-input switcher" type="radio" name="basemap" value="GSATELLITE">
+					<label class="form-check-label">Google Satellite</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="infodetails" class="infodetails">
+		<a href="#" class="infodetails-closer"><i class="fas fa-fw fa-times"></i></a>
+		<div id="infodetails-content"></div>
+    </div>
+	<script type="text/javascript" src="vendor/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript" src="vendor/bootstrap-5.0.0-dist/js/bootstrap.bundle.min.js"></script>
+	<script type="text/javascript" src="vendor/openlayers-6.5.0-dist/ol.js"></script>
+	<script type="text/javascript" src="map/styles/BANGUNAN1LANTAI_12_style.js"></script>
+	<script type="text/javascript" src="map/styles/JALUR_10_style.js"></script>
+	<script type="text/javascript" src="map/styles/JANGKAUANMENUJUTEA_11_style.js"></script>
+	<script type="text/javascript" src="map/styles/JANGKAUANTESSESEORANGDENGANANAK15Menit_8_style.js"></script>
+	<script type="text/javascript" src="map/styles/JANGKAUANTESSESEORANGDENGANANAK39Menit_5_style.js"></script>
+	<script type="text/javascript" src="map/styles/JANGKAUANTESUNTUKLANSIA15Menit_7_style.js"></script>
+	<script type="text/javascript" src="map/styles/JANGKAUANTESUNTUKLANSIA39Menit_4_style.js"></script>
+	<script type="text/javascript" src="map/styles/JANGKAUANTESUNTUKMENDORONGKERETA15Menit_9_style.js"></script>
+	<script type="text/javascript" src="map/styles/JANGKAUANTESUNTUKMENDORONGKERETA39Menit_6_style.js"></script>
+	<script type="text/javascript" src="map/styles/TEMPATEVAKUASIAKHIRTEA_13_style.js"></script>
+	<script type="text/javascript" src="map/styles/WILAYAHRAWANTSUNAMI_3_style.js"></script>
+	<script type="text/javascript" src="map/layers/BANGUNAN1LANTAI_12.js"></script>
+	<script type="text/javascript" src="map/layers/JALUR_10.js"></script>
+	<script type="text/javascript" src="map/layers/JANGKAUANMENUJUTEA_11.js"></script>
+	<script type="text/javascript" src="map/layers/JANGKAUANTESSESEORANGDENGANANAK15Menit_8.js"></script>
+	<script type="text/javascript" src="map/layers/JANGKAUANTESSESEORANGDENGANANAK39Menit_5.js"></script>
+	<script type="text/javascript" src="map/layers/JANGKAUANTESUNTUKLANSIA15Menit_7.js"></script>
+	<script type="text/javascript" src="map/layers/JANGKAUANTESUNTUKLANSIA39Menit_4.js"></script>
+	<script type="text/javascript" src="map/layers/JANGKAUANTESUNTUKMENDORONGKERETA15Menit_9.js"></script>
+	<script type="text/javascript" src="map/layers/JANGKAUANTESUNTUKMENDORONGKERETA39Menit_6.js"></script>
+	<script type="text/javascript" src="map/layers/TEMPATEVAKUASIAKHIRTEA_13.js"></script>
+	<script type="text/javascript" src="map/layers/WILAYAHRAWANTSUNAMI_3.js"></script>
+	<script type="text/javascript" src="map/layers/layers.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
